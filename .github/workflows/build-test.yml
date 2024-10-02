@@ -11,6 +11,14 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
+
+    - name: Check for package.json
+      run: |
+        if [ ! -f package.json ]; then
+          echo "package.json is missing!"
+          exit 1
+        fi
+    
     - name: Build Hexo site
       run: |
         docker build -t hexo-site . || { echo "Docker build failed"; exit 1; }
