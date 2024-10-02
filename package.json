@@ -5,7 +5,7 @@
     "build": "hexo generate",
     "server": "hexo server"
     "clean": "hexo clean",
-    "deploy": "hexo deploy",
+    "deploy": "hexo deploy"
   },
 
   "dependencies": {
