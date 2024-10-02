@@ -13,14 +13,31 @@ jobs:
     - uses: actions/checkout@v4
     - name: Build Hexo site
       run: |
-        docker build -t hexo-site .
-        docker run --name hexo-container hexo-site
-        docker cp hexo-container:/app/public ./public
+        docker build -t hexo-site . || { echo "Docker build failed"; exit 1; }
+
+        docker run --name hexo-container hexo-site npm run build > build_output.log 2>&1 || { 
+          echo "Build process failed. Container logs:"; 
+          docker logs hexo-container;
+          echo "Build output:";
+          cat build_output.log;
+          exit 1;
+        }
+        
+        docker cp hexo-container:/app/public ./public || { echo "Failed to copy files from container"; exit 1; }
+        docker rm hexo-container
+        
     - name: Upload artifact
       uses: actions/upload-artifact@v4
       with:
         name: hexo-site
         path: public
+
+    - name: Upload build logs
+      uses: actions/upload-artifact@v4
+      with:
+        name: build-logs
+        path: build_output.log
+        
     - name: Trigger tests
       uses: peter-evans/repository-dispatch@v3
       with:
