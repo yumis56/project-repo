@@ -37,11 +37,11 @@ jobs:
           exit 1;
         }
 
-        #docker exec hexo-container ls -la /app;
-        docker cp hexo-container:/app/public ./public || { echo "Failed to copy files from container";  exit 1; }
-
         echo "Contents of /app directory:"
         docker exec hexo-container ls -la /app
+
+        # docker exec hexo-container ls -la /app;
+        docker cp hexo-container:/app/public ./public || { echo "Failed to copy files from container";  exit 1; }
         
         docker rm hexo-container
         
