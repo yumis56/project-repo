@@ -1,12 +1,12 @@
 FROM node:latest as node
 
 WORKDIR /app
-
-COPY package*.json ./
+COPY . .
+#COPY package*.json ./
 
 RUN npm install -g hexo-cli
 
-COPY . .
+#COPY . .
 
 RUN if [ ! -f "_config.yml" ]; then hexo init .; fi
 RUN npm run build
