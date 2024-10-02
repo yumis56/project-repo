@@ -29,9 +29,12 @@ jobs:
         fi
         
         docker build -t hexo-site . || { echo "Docker build failed"; exit 1; }
+        
+        docker ps -a
+        
         docker run -t --name hexo-container hexo-site npm run build > build_output.log 2>&1 || { 
           echo "Build process failed. Container logs:"; 
-          docker -t logs hexo-container;
+          docker logs hexo-container;
           echo "Build output:";
           cat build_output.log;
           exit 1;
