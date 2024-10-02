@@ -22,7 +22,7 @@ jobs:
         name: hexo-site
         path: public
     - name: Trigger tests
-      uses: peter-evans/repository-dispatch@v4
+      uses: peter-evans/repository-dispatch@v3
       with:
         token: ${{ secrets.REPO_ACCESS_TOKEN }}
         repository: yumis56/testing-repo
