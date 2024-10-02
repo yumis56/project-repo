@@ -12,6 +12,8 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
+    
+
     - name: Check for package.json
       run: |
         if [ ! -f package.json ]; then
@@ -21,8 +23,12 @@ jobs:
     
     - name: Build Hexo site
       run: |
+        if [ ! -f _config.yml ]; then
+          echo "_config.yml is missing!"
+          exit 1
+        fi
+        
         docker build -t hexo-site . || { echo "Docker build failed"; exit 1; }
-
         docker run --name hexo-container hexo-site npm run build > build_output.log 2>&1 || { 
           echo "Build process failed. Container logs:"; 
           docker logs hexo-container;
@@ -30,8 +36,11 @@ jobs:
           cat build_output.log;
           exit 1;
         }
+
+        echo "Contents of /app directory:"
+        docker exec hexo-container ls -la /app
+        docker cp hexo-container:/app/public ./public || { echo "Failed to copy files from container"; docker exec hexo-container ls -la /app; exit 1; }
         
-        docker cp hexo-container:/app/public ./public || { echo "Failed to copy files from container"; exit 1; }
         docker rm hexo-container
         
     - name: Upload artifact
