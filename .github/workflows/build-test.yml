@@ -1,0 +1,30 @@
+name: Build and Test
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Build Hexo site
+      run: |
+        docker build -t hexo-site .
+        docker run --name hexo-container hexo-site
+        docker cp hexo-container:/app/public ./public
+    - name: Upload artifact
+      uses: actions/upload-artifact@v2
+      with:
+        name: hexo-site
+        path: public
+    - name: Trigger tests
+      uses: peter-evans/repository-dispatch@v1
+      with:
+        token: ${{ secrets.REPO_ACCESS_TOKEN }}
+        repository: yumis56/testing-repo
+        event-type: run-tests
+        client-payload: '{"ref": "${{ github.ref }}", "sha": "${{ github.sha }}"}'
