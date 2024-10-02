@@ -1,9 +1,9 @@
-FROM node:20
+FROM node:latest as node
 
 WORKDIR /app
 
 COPY package*.json ./
-RUN npm install
+
 RUN npm install -g hexo-cli
 
 COPY . .
