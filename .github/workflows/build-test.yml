@@ -38,7 +38,7 @@ jobs:
         }
 
         echo "Contents of /app directory:"
-        docker -it exec hexo-container ls -la /app
+        docker --interactive exec hexo-container ls -la /app
 
         # docker exec hexo-container ls -la /app;
         docker -t cp hexo-container:/app/public ./public || { echo "Failed to copy files from container";  exit 1; }
