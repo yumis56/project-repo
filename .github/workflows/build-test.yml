@@ -33,7 +33,7 @@ jobs:
     - name: Checkout testing repo
       uses: actions/checkout@v4
       with:
-        repository: your-username/testing-repo
+        repository: yumis56/testing-repo
         path: testing-repo
 
     - name: Install Playwright
