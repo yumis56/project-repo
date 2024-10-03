@@ -36,6 +36,26 @@ jobs:
         repository: yumis56/testing-repo
         path: testing-repo
 
+
+
+    - name: Install Playwright
+      run: |
+        cd testing-repo
+        npm ci
+        npx playwright install
+
+    - name: Run Playwright tests
+      run: |
+        cd testing-repo
+        npx playwright test
+
+    - name: Deploy to GitHub Pages
+      if: success()
+      uses: peaceiris/actions-gh-pages@v3
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        publish_dir: ./project-repo/public
+
     #- name: Trigger tests
       #uses: peter-evans/repository-dispatch@v3
       #with:
