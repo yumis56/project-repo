@@ -4,6 +4,7 @@ ENV HOST=0.0.0.0
 
 WORKDIR /app
 COPY . .
+COPY ./ /app/
 #COPY package*.json ./
 
 RUN npm install -g hexo-cli
