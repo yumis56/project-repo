@@ -30,15 +30,15 @@ jobs:
         cd project-repo
         npx hexo generate
 
-    #- name: Checkout testing repo
-    #  uses: actions/checkout@v4
-    #  with:
-    #    repository: yumis56/testing-repo
-    #    path: testing-repo
-
-    - name: Trigger tests
-      uses: peter-evans/repository-dispatch@v3
+    - name: Checkout testing repo
+      uses: actions/checkout@v4
       with:
-        token: ${{ secrets.REPO_ACCESS_TOKEN }}
         repository: yumis56/testing-repo
-        event-type: run-tests
+        path: testing-repo
+
+    #- name: Trigger tests
+      #uses: peter-evans/repository-dispatch@v3
+      #with:
+        #token: ${{ secrets.REPO_ACCESS_TOKEN }}
+        #repository: yumis56/testing-repo
+        #event-type: run-tests
