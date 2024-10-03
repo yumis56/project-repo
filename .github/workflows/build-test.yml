@@ -9,63 +9,47 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+
     steps:
     - uses: actions/checkout@v4
+      with:
+        path: project-repo
 
-    
+    - name: Use Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20'
 
-    - name: Check for package.json
+    - name: Install dependencies
       run: |
-        if [ ! -f package.json ]; then
-          echo "package.json is missing!"
-          exit 1
-        fi
-    
+        cd project-repo
+        npm ci
+
     - name: Build Hexo site
       run: |
-        if [ ! -f _config.yml ]; then
-          echo "_config.yml is missing!"
-          exit 1
-        fi
-        
-        docker build -t hexo-site . || { echo "Docker build failed"; exit 1; }
-        
-        
-        
-        docker run -t --name hexo-container hexo-site npm run build > build_output.log 2>&1 || { 
-          echo "Build process failed. Container logs:"; 
-          docker logs hexo-container;
-          echo "Build output:";
-          cat build_output.log;
-          exit 1;
-        }
+        cd project-repo
+        npx hexo generate
 
-        docker ps -a
-
-        # docker exec hexo-container ls -la /app;
-        docker cp hexo-container:/app/public ./public || { echo "Failed to copy files from container";  exit 1; }
-
-        echo "Contents of /app directory:"
-        docker exec hexo-container ls -la /app
-        
-        docker rm hexo-container
-        
-    - name: Upload artifact
-      uses: actions/upload-artifact@v4
+    - name: Checkout testing repo
+      uses: actions/checkout@v4
       with:
-        name: hexo-site
-        path: public
+        repository: your-username/testing-repo
+        path: testing-repo
 
-    - name: Upload build logs
-      uses: actions/upload-artifact@v4
+    - name: Install Playwright
+      run: |
+        cd testing-repo
+        npm ci
+        npx playwright install
+
+    - name: Run Playwright tests
+      run: |
+        cd testing-repo
+        npx playwright test
+
+    - name: Deploy to GitHub Pages
+      if: success()
+      uses: peaceiris/actions-gh-pages@v3
       with:
-        name: build-logs
-        path: build_output.log
-        
-    - name: Trigger tests
-      uses: peter-evans/repository-dispatch@v3
-      with:
-        token: ${{ secrets.REPO_ACCESS_TOKEN }}
-        repository: yumis56/testing-repo
-        event-type: run-tests
-        client-payload: '{"ref": "${{ github.ref }}", "sha": "${{ github.sha }}"}'
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        publish_dir: ./project-repo/public
