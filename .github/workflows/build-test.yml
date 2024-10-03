@@ -30,7 +30,7 @@ jobs:
         
         docker build -t hexo-site . || { echo "Docker build failed"; exit 1; }
         
-        docker ps -e
+        
         
         docker run -t --name hexo-container hexo-site npm run build > build_output.log 2>&1 || { 
           echo "Build process failed. Container logs:"; 
@@ -40,7 +40,7 @@ jobs:
           exit 1;
         }
 
-        
+        docker ps -a
 
         # docker exec hexo-container ls -la /app;
         docker cp hexo-container:/app/public ./public || { echo "Failed to copy files from container";  exit 1; }
