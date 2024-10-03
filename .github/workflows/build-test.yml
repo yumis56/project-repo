@@ -30,7 +30,7 @@ jobs:
         
         docker build -t hexo-site . || { echo "Docker build failed"; exit 1; }
         
-        docker ps -a
+        docker ps -e
         
         docker run -t --name hexo-container hexo-site npm run build > build_output.log 2>&1 || { 
           echo "Build process failed. Container logs:"; 
